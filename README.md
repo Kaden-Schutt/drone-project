@@ -2,6 +2,10 @@
 
 FSE 100 Mini Project: Firefighting Quadcopter
 
+## TinkerCAD
+
+[Open project](https://www.tinkercad.com/things/9Rtwm0qNx6y-fse100-full-spec-drone-code?sharecode=Vy8b_OYDbGn0Ie5N9A64pYtMWNLehlkzH-VMPBi1KqQ)
+
 ## Main Code
 
 **`drone_control.ino`** — paste into TinkerCAD Arduino editor.
@@ -61,10 +65,6 @@ Run in order 1→5 in TinkerCAD. Paste each file into the Arduino editor.
 | 5 | `test5_flight_profile.ino` | Takeoff, hover, pitch, roll, yaw |
 
 **Note:** Tests still use old pin assignments. Run main code with new pins.
-
-## TinkerCAD
-
-[Open project](https://www.tinkercad.com/things/9Rtwm0qNx6y-fse100-full-spec-drone-code?sharecode=Vy8b_OYDbGn0Ie5N9A64pYtMWNLehlkzH-VMPBi1KqQ)
 
 ## Team
 - Kaden Schutt
