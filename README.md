@@ -1,73 +1,70 @@
-# Drone Project — Wiring Validation Test Suite
+# Drone Project — Firefighting Quadcopter
 
 FSE 100 Mini Project: Firefighting Quadcopter
 
-## Pin Map (Quick Reference)
+## Main Code
 
-| Motor | Position    | Enable (PWM) | Input A | Input B | Controller |
-|-------|-------------|-------------|---------|---------|------------|
-| MLB   | Left Back   | D5          | D13 (2A)* | D12 (1A)* | UREAR |
-| MRB   | Right Back  | D6          | D7 (3A) | D2 (4A) | UREAR |
-| MLF   | Left Front  | D9          | A1 (1A) | A0 (2A) | UFRONT |
-| MRF   | Right Front | D10         | D11 (3A)| D8 (4A) | UFRONT |
+**`drone_control.ino`** — paste into TinkerCAD Arduino editor.
 
-*MLB polarity is physically reversed — Input A/B are swapped in code so "forward" matches the other motors.
+Serial commands (9600 baud):
 
-| Sensor/Actuator | Pin | Notes |
-|-----------------|-----|-------|
-| TMP36           | A4  | ~25°C at room temp, ADC ≈ 153 |
-| Photoresistor   | A5  | 10k pull-down divider. Click component to adjust light. |
-| Servo valve     | D3  | 0°–180° proportional flow control |
+| Key | Action |
+|-----|--------|
+| `f` | Forward |
+| `b` | Backward |
+| `l` | Turn left |
+| `r` | Turn right |
+| `h` | Hover |
+| `x` | Stop (all motors off) |
+| `o` | Open water valve |
+| `c` | Close water valve |
+| `s` | Print status (temp, light, water, fire) |
+| `m` | Print menu |
 
-## How to Run Tests
+## Pin Map (Rewired — Timer-Safe)
 
-1. Open the [TinkerCAD project](https://www.tinkercad.com/things/6yOd0E1L9jI-color-coded-concat?sharecode=-n0Dz9ZZDIp9Zq27qAVLtp7cF929VPaRdQeI4db4ZJc)
-2. Delete the existing code in the Arduino editor
-3. Paste the contents of a test file
-4. Start simulation and open Serial Monitor (9600 baud)
-5. Run tests **in order 1 → 5**
+**Why rewired:** `analogWrite` on D5/D6 conflicts with Timer0 (breaks Serial/delay). `Servo.h` hijacks Timer1 (kills PWM on D9/D10). Fix: move enables to Timer1/Timer2, servo to manual pulse on D5.
 
-## Tests
+| Pin | Function | Timer |
+|-----|----------|-------|
+| D9  | EN_MLB (Left Back speed) | Timer1 ✅ |
+| D10 | EN_MRB (Right Back speed) | Timer1 ✅ |
+| D3  | EN_MLF (Left Front speed) | Timer2 ✅ |
+| D11 | EN_MRF (Right Front speed) | Timer2 ✅ |
+| D5  | Servo valve (manual pulse) | No timer needed |
 
-### Test 1: Sensor Wiring (`test1_sensors.ino`)
-- Validates TMP36 (A4) and photoresistor (A5) are reading valid ranges
-- **Important:** Click the photoresistor and raise the light slider before running — it defaults to 0V (total darkness)
-- Type `r` in serial monitor to run/rerun
-- **Auto PASS/FAIL** in serial output
+| Motor | Position | Enable | Dir A | Dir B | Controller |
+|-------|----------|--------|-------|-------|------------|
+| MLB   | Left Back | D9 | D13* | D12* | UREAR 1-2 |
+| MRB   | Right Back | D10 | D7 | D2 | UREAR 3-4 |
+| MLF   | Left Front | D3 | A1 | A0 | UFRONT 1-2 |
+| MRF   | Right Front | D11 | D4 | D8 | UFRONT 3-4 |
 
-### Test 2: Servo Valve (`test2_servo.ino`)
-- Confirms D3 signal wire reaches the servo
-- Sweeps 0° → 90° → 180° → 0°
-- **Watch the servo arm move** in TinkerCAD to confirm
+*MLB polarity reversed — Dir A/B swapped in code.
 
-### Test 3: Motor Isolation (`test3_isolation.ino`)
-- Spins each motor alone for 3 seconds, all others off
-- **PASS** = only the named motor spins each round
-- **FAIL** = wrong motor spins (wires crossed) or no motor spins (disconnected)
+| Sensor | Pin |
+|--------|-----|
+| TMP36 | A4 |
+| Photoresistor | A5 (10k pull-down) |
+| Servo valve | D5 |
 
-### Test 4: Direction Reversal (`test4_direction.ino`)
-- Each motor spins one direction for 2s, then reverses for 2s
-- **PASS** = motor changes direction
-- **FAIL** = same direction both times (an input pin is disconnected or shorted)
+## Wiring Validation Tests (`tests/`)
 
-### Test 5: Flight Profile (`test5_flight_profile.ino`)
-- 5 phases, ~30 seconds total:
-  1. **Takeoff ramp** — all 4 motors 0→200 over 5s (should gradually speed up)
-  2. **Hover** — all 4 at 200 for 5s (should be equal speed)
-  3. **Pitch forward** — front=240 rear=120 for 5s (front pair faster)
-  4. **Roll right** — left=240 right=120 for 5s (left pair faster)
-  5. **Yaw CW** — diagonal pairs opposite direction for 5s
-- Serial monitor prints what to watch for before each phase
+Run in order 1→5 in TinkerCAD. Paste each file into the Arduino editor.
 
-## What Each Test Catches
+| Test | File | What it checks |
+|------|------|----------------|
+| 1 | `test1_sensors.ino` | TMP36 + photoresistor range (type `r` to run) |
+| 2 | `test2_servo.ino` | Servo sweep on D3 (visual) |
+| 3 | `test3_isolation.ino` | Each motor spins alone |
+| 4 | `test4_direction.ino` | Each motor reverses direction |
+| 5 | `test5_flight_profile.ino` | Takeoff, hover, pitch, roll, yaw |
 
-| Test | Catches |
-|------|---------|
-| 1    | Disconnected sensor wires, missing pull-down resistor, shorted pins |
-| 2    | Servo signal wire disconnected or on wrong pin |
-| 3    | Crossed motor wires, wrong enable-to-motor mapping |
-| 4    | Direction input pin disconnected or both pins shorted together |
-| 5    | Enable not carrying PWM (hardwired to VCC), wrong differential mapping |
+**Note:** Tests still use old pin assignments. Run main code with new pins.
+
+## TinkerCAD
+
+[Open project](https://www.tinkercad.com/things/6yOd0E1L9jI-color-coded-concat?sharecode=-n0Dz9ZZDIp9Zq27qAVLtp7cF929VPaRdQeI4db4ZJc)
 
 ## Team
 - Kaden Schutt
