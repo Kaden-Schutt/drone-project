@@ -4,7 +4,7 @@ FSE 100 Mini Project: Firefighting Quadcopter
 
 ## TinkerCAD
 
-[Open project]([https://www.tinkercad.com/things/9Rtwm0qNx6y-fse100-full-spec-drone-code?sharecode=Vy8b_OYDbGn0Ie5N9A64pYtMWNLehlkzH-VMPBi1KqQ](https://www.tinkercad.com/things/gTlSbLrZ1fu-finalized-fse100-mini-project-pt-4?sharecode=BiLSVvK5VS0GNerAj0-p8AShSNrBMOhkJbpxzXZT1K0))
+[Open project](https://www.tinkercad.com/things/gTlSbLrZ1fu-finalized-fse100-mini-project-pt-4?sharecode=BiLSVvK5VS0GNerAj0-p8AShSNrBMOhkJbpxzXZT1K0)
 
 ## Main Code
 
