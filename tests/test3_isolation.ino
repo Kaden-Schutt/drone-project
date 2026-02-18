@@ -2,18 +2,18 @@
 // Spins each motor ALONE for 3 seconds
 // All other motors OFF -- if more than one spins, wiring is crossed
 //
-// Pin map (from master doc, MLB polarity corrected):
-//   MLB: EN=D5,  A=D13, B=D12  (UREAR 1-2, polarity reversed)
-//   MRB: EN=D6,  A=D7,  B=D2   (UREAR 3-4)
-//   MLF: EN=D9,  A=A1,  B=A0   (UFRONT 1-2)
-//   MRF: EN=D10, A=D11, B=D8   (UFRONT 3-4)
+// REWIRED pin map:
+//   MLB: EN=D9,  A=D13, B=D12  (Timer1, polarity reversed)
+//   MRB: EN=D10, A=D7,  B=D2   (Timer1)
+//   MLF: EN=D3,  A=A1,  B=A0   (Timer2)
+//   MRF: EN=D11, A=D4,  B=D8   (Timer2)
 
-const int EN_MLB = 5;   const int MLB_A = 13;  const int MLB_B = 12;
-const int EN_MRB = 6;   const int MRB_A = 7;   const int MRB_B = 2;
-const int EN_MLF = 9;   const int MLF_A = A1;  const int MLF_B = A0;
-const int EN_MRF = 10;  const int MRF_A = 11;  const int MRF_B = 8;
+const int EN_MLB = 9;   const int MLB_A = 13;  const int MLB_B = 12;
+const int EN_MRB = 10;  const int MRB_A = 7;   const int MRB_B = 2;
+const int EN_MLF = 3;   const int MLF_A = A1;  const int MLF_B = A0;
+const int EN_MRF = 11;  const int MRF_A = 4;   const int MRF_B = 8;
 
-const int allPins[] = {5,6,9,10,12,13,7,2,A1,A0,11,8};
+const int allPins[] = {9,10,3,11, 13,12,7,2,A1,A0,4,8};
 
 void allOff() {
   for (int i = 0; i < 12; i++) {
